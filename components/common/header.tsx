@@ -1,15 +1,11 @@
-import {
-  CompassIcon,
-  GemIcon,
-  Ghost,
-  HomeIcon,
-  SparklesIcon,
-  UserIcon,
-} from "lucide-react";
-import Image from "next/image";
+import { Suspense } from "react";
+import { CompassIcon, GemIcon, HomeIcon, SparklesIcon } from "lucide-react";
 import Link from "next/link";
 import { Button } from "../ui/button";
+import { SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
+import { auth } from "@clerk/nextjs/server";
 
+// 1. Your Logo stays exactly the same
 const Logo = () => {
   return (
     <Link href="/" className="flex items-center gap-2 group">
@@ -23,14 +19,58 @@ const Logo = () => {
   );
 };
 
-const isSignedIn = true;
+const SignUpBTN = () => {
+  return (
+    <Button className="bg-primary text-primary-foreground font-medium text-sm sm:text-base h-10 px-4 sm:px-5 cursor-pointer hover:bg-secondary hover:text-secondary-foreground transition-colors">Sign Up</Button>
+  );
+};
+const SignInBTN = () => {
+  return (
+    <Button variant={"ghost"} className="font-medium text-sm sm:text-base h-10 px-4 sm:px-5 cursor-pointer">Sign In</Button>
+  );
+};
 
+// 2. The AuthArea ONLY handles the logged-in/logged-out buttons.
+// Because it is async, we can safely wait for Clerk here.
+async function AuthArea() {
+  const { userId } = await auth();
+  const isSignedIn = !!userId;
+
+  if (isSignedIn) {
+    return (
+      <>
+        <Button asChild>
+          <Link href="/submit">
+            <GemIcon className="size-4" />
+            Submit Project
+          </Link>
+        </Button>
+        {/* The Clerk Profile Picture Dropdown */}
+        <UserButton />
+      </>
+    );
+  }
+
+  return (
+    <>
+      <SignInButton>
+        <SignInBTN/>
+      </SignInButton>
+      <SignUpButton>
+        <SignUpBTN/>
+      </SignUpButton>
+    </>
+  );
+}
+
+// 3. Your main Header is now a normal, instant-loading component!
 export default function Header() {
   return (
     <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
       <div className="wrapper px-12">
         <div className="flex h-16 items-center justify-between">
           <Logo />
+
           <nav className="flex items-center gap-1">
             <Link
               href="/"
@@ -47,26 +87,20 @@ export default function Header() {
               <span>Explore</span>
             </Link>
           </nav>
+
           <div className="flex items-center gap-3">
-            {isSignedIn ? (
-              <>
-                <Button asChild>
-                  <Link href="/submit">
-                    <GemIcon className="size-4" />
-                    Submit Project
-                  </Link>
-                </Button>
-                {/* Clerk User */}
-                <Button variant={"ghost"}>
-                  <UserIcon className="size-4"/>
-                </Button>
-              </>
-            ) : (
-              <>
-                <Button variant={"ghost"}>Sign In</Button>
-                <Button>Sign Up</Button>
-              </>
-            )}
+            {/* 
+              4. We wrap ONLY the AuthArea in Suspense! 
+              The rest of your header loads instantly, while the buttons show 
+              a smooth grey pulsing shape for a split second while verifying login.
+            */}
+            <Suspense
+              fallback={
+                <div className="h-10 w-24 bg-muted animate-pulse rounded-full" />
+              }
+            >
+              <AuthArea />
+            </Suspense>
           </div>
         </div>
       </div>
