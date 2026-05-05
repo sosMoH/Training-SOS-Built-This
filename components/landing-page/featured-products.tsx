@@ -20,7 +20,7 @@ const featuredProducts = [
     description: "A Simple Amazon App",
     tags: ["SaaS", "B2B", "Global"],
     votes: 117,
-    isFeatured: true,
+    isFeatured: false,
   },
   {
     id: 3,
