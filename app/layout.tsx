@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
+import Header from "@/components/common/header";
+import Footer from "@/components/common/footer";
 
 
 const outfit = Outfit({
@@ -26,9 +28,9 @@ export default function RootLayout({
       className={`${outfit.className}`}
     >
       <body className="min-h-full flex flex-col">
-        <header>sosBuiltThis</header>
+        <Header />
         {children}
-        <footer>sosBuiltThis Inc. All rights Reserved</footer>
+        <Footer />
       </body>
     </html>
   );

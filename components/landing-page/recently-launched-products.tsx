@@ -1,10 +1,9 @@
-import React from "react";
 import SectionHeader from "../common/section-header";
 import { CalendarIcon, RocketIcon } from "lucide-react";
 import ProductCard from "../products/product-card";
 import EmptyState from "../common/empty-state";
 
-const recentlyLaunchedProducts = [
+const recentlyLaunchedProducts: any[] = [
   // {
   //   id: 1,
   //   name: "SOS Movies",
@@ -55,7 +54,10 @@ export default function RecentlyLaunchedProducts() {
             ))}
           </div>
         ) : (
-          <EmptyState message="No products launched in the last week. Check back soon for new launches." icon={CalendarIcon} />
+          <EmptyState
+            message="No products launched in the last week. Check back soon for new launches."
+            icon={CalendarIcon}
+          />
         )}
       </div>
     </section>
