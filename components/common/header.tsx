@@ -1,9 +1,21 @@
 import { Suspense } from "react";
-import { CompassIcon, GemIcon, HomeIcon, SparklesIcon } from "lucide-react";
+import {
+  BuildingIcon,
+  CompassIcon,
+  GemIcon,
+  HomeIcon,
+  SparklesIcon,
+} from "lucide-react";
 import Link from "next/link";
 import { Button } from "../ui/button";
-import { SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
+import {
+  OrganizationSwitcher,
+  SignInButton,
+  SignUpButton,
+  UserButton,
+} from "@clerk/nextjs";
 import { auth } from "@clerk/nextjs/server";
+import CustomUserButton from "./custom-user-button";
 
 // 1. Your Logo stays exactly the same
 const Logo = () => {
@@ -21,12 +33,19 @@ const Logo = () => {
 
 const SignUpBTN = () => {
   return (
-    <Button className="bg-primary text-primary-foreground font-medium text-sm sm:text-base h-10 px-4 sm:px-5 cursor-pointer hover:bg-secondary hover:text-secondary-foreground transition-colors">Sign Up</Button>
+    <Button className="bg-primary text-primary-foreground font-medium text-sm sm:text-base h-10 px-4 sm:px-5 cursor-pointer hover:bg-secondary hover:text-secondary-foreground transition-colors">
+      Sign Up
+    </Button>
   );
 };
 const SignInBTN = () => {
   return (
-    <Button variant={"ghost"} className="font-medium text-sm sm:text-base h-10 px-4 sm:px-5 cursor-pointer">Sign In</Button>
+    <Button
+      variant={"ghost"}
+      className="font-medium text-sm sm:text-base h-10 px-4 sm:px-5 cursor-pointer"
+    >
+      Sign In
+    </Button>
   );
 };
 
@@ -46,7 +65,7 @@ async function AuthArea() {
           </Link>
         </Button>
         {/* The Clerk Profile Picture Dropdown */}
-        <UserButton />
+        <CustomUserButton />
       </>
     );
   }
@@ -54,10 +73,10 @@ async function AuthArea() {
   return (
     <>
       <SignInButton>
-        <SignInBTN/>
+        <SignInBTN />
       </SignInButton>
       <SignUpButton>
-        <SignUpBTN/>
+        <SignUpBTN />
       </SignUpButton>
     </>
   );
