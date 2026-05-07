@@ -6,7 +6,8 @@ import { db } from "@/db";
 import { products } from "@/db/schema";
 import z from "zod";
 import { FormState } from "@/types";
-
+import { eq, sql } from "drizzle-orm";
+import { refresh, revalidatePath } from "next/cache";
 
 export const addProductAction = async (
   prevState: FormState,
@@ -82,7 +83,7 @@ export const addProductAction = async (
       userId,
       organizationId: activeOrgId,
     });
-
+    refresh();
     return {
       success: true,
       message: "Product Submitted Successfully! It will be reviewed shortly",
@@ -102,6 +103,90 @@ export const addProductAction = async (
       errors: error,
       success: false,
       message: `Failed to Submit Product, Error: ${error}`,
+    };
+  }
+};
+
+export const upVoteProductAction = async (productId: number) => {
+  try {
+    const { userId, orgId } = await auth();
+
+    if (!userId) {
+      console.log("User not Signed In");
+      return {
+        success: false,
+        message: "You must be Signed In to UpVote a Product",
+      };
+    }
+
+    if (!orgId) {
+      console.log("User is not a member of an org");
+      return {
+        success: false,
+        message: "You must be a member of an org to UpVote a Product",
+      };
+    }
+
+    await db
+      .update(products)
+      .set({
+        voteCount: sql`GREATEST(0, vote_count + 1)`,
+      })
+      .where(eq(products.id, productId));
+
+    revalidatePath("/");
+
+    return {
+      success: true,
+      message: "Product UpVoted Successfully",
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message: "Failed to upvote a Product",
+      voteCount: 0,
+    };
+  }
+};
+
+export const downVoteProductAction = async (productId: number) => {
+  try {
+    const { userId, orgId } = await auth();
+
+    if (!userId) {
+      console.log("User not Signed In");
+      return {
+        success: false,
+        message: "You must be Signed In to DownVote a Product",
+      };
+    }
+
+    if (!orgId) {
+      console.log("User is not a member of an org");
+      return {
+        success: false,
+        message: "You must be a member of an org to DownVote a Product",
+      };
+    }
+
+    await db
+      .update(products)
+      .set({
+        voteCount: sql`GREATEST(0, vote_count - 1)`,
+      })
+      .where(eq(products.id, productId));
+
+    revalidatePath("/");
+
+    return {
+      success: true,
+      message: "Product DownVoted Successfully",
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message: "Failed to downvote a Product",
+      voteCount: 0,
     };
   }
 };
