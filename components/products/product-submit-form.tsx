@@ -27,6 +27,8 @@ export default function ProductSubmitForm() {
 
   console.log(state);
 
+  const {errors, message, success} = state;
+
   return (
     <form className="space-y-6 pb-6" action={formAction}>
       <FormField
@@ -36,7 +38,7 @@ export default function ProductSubmitForm() {
         placeholder="My Awesome Project"
         required
         onChange={() => {}}
-        error=""
+        error={errors?.name}
       />
       <FormField
         id="slug"
@@ -45,7 +47,7 @@ export default function ProductSubmitForm() {
         placeholder="my-awesome-product"
         required
         onChange={() => {}}
-        error=""
+        error={errors?.slug}
         helperText="URL-friendly version of your product name"
       />
       <FormField
@@ -55,7 +57,7 @@ export default function ProductSubmitForm() {
         placeholder="A brief, catchy description"
         required
         onChange={() => {}}
-        error=""
+        error={errors?.tagline}
       />
       <FormField
         id="description"
@@ -64,7 +66,7 @@ export default function ProductSubmitForm() {
         placeholder="Tell us more about your product..."
         required
         onChange={() => {}}
-        error=""
+        error={errors?.description}
         textarea
       />
       <FormField
@@ -74,7 +76,7 @@ export default function ProductSubmitForm() {
         placeholder="https://yourproduct.com"
         required
         onChange={() => {}}
-        error=""
+        error={errors?.websiteUrl}
         helperText="Enter your product's website or landing page"
       />
       <FormField
@@ -84,7 +86,7 @@ export default function ProductSubmitForm() {
         placeholder="Ai, SaaS, Productivity"
         required
         onChange={() => {}}
-        error=""
+        error={errors?.tags}
         helperText="Comma-separated tags (e.g., AI, SaaS, Productivity)"
       />
       <Button type="submit" size="lg" className="w-full">
